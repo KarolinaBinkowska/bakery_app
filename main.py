@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 import pandas as pd
 import sqlite3
-
+from tkinter import messagebox
 
 class Application:
     def __init__(self):
@@ -10,6 +10,7 @@ class Application:
         self.window.configure(bg='#ffa366')
         self.window.title("piekarnia")
         self.window.iconbitmap('C:/bakery_app_files/logo3.ico')
+        self.fonts = ("Comic Sans MS", 9, "bold")
         self.app_width = self.window.winfo_screenwidth()
         self.app_height = self.window.winfo_screenheight()
         self.scr_width = self.window.winfo_screenwidth()
@@ -35,12 +36,13 @@ class Application:
         self.tab2 = tk.Frame(self.notebook, width=self.app_width - 50, height=self.app_height - 150)
         self.tab2.pack(fill="both", expand=True, ipadx=15, ipady=15)
         self.notebook.add(self.tab2, text="   bary   ")
-        self.mainframe=ttk.LabelFrame(self.tab1,text="menu główne",width=self.app_width)
+        self.mainframe=ttk.LabelFrame(self.tab1,text="menu główne",width=self.app_width-150)
         self.mainframe.pack(expand="yes",fill="both", side=tk.TOP)
-        self.bottomframe=ttk.LabelFrame(self.tab1, text="tabela", width=self.app_width,height=self.app_height-300)
+        self.bottomframe=ttk.LabelFrame(self.tab1, text="tabela", width=self.app_width-150,height=self.app_height-340)
         self.bottomframe.pack(expand="yes", fill="both")
-        self.buttons_frame = ttk.LabelFrame(self.tab1, text="opcje", width=500, )
+        self.buttons_frame = ttk.LabelFrame(self.tab1, text="opcje", width=self.app_width-150,)
         self.buttons_frame.pack(expand="yes", fill="both",side=tk.BOTTOM)
+        ''' ==========================PRZYCISKI MENU ==================================================='''
         self.select_button = tk.Button(self.buttons_frame, text="wyczyść pozycję", command=self.clear,state=tk.DISABLED,bd=3,
                                        width=15, height=2, activebackground='#ffa366', relief="groove")
         self.select_button.grid(row=0, column=0, padx=12, pady=5)
@@ -57,19 +59,55 @@ class Application:
                                     activebackground='#ffa366',relief="groove")
         self.add_button.grid(row=0, column=3, padx=12, pady=5)
         ''' ==========================PRZYCISKI MENU GŁÓWNEGO==================================================='''
-        self.button1 = tk.Button(self.mainframe, text="wczytaj plik", command=self.open_file, bd=3, width=15, height=2, activebackground='#ffa366',relief="groove")
+        self.button1 = tk.Button(self.mainframe, text="wczytaj plik", command=self.open_file, bd=3, width=15, height=2,
+                                 activebackground='#ffa366',relief="groove")
         self.button1.grid(column=1, row=1, padx=15, pady=15)
-        self.button2 = tk.Button(self.mainframe, text="otwórz zestawienie", command=self.create_view, bd=3, width=15, height=2, activebackground='#ffa366',relief="groove")
+        self.button2 = tk.Button(self.mainframe, text="otwórz zestawienie", command=self.create_view, bd=3, width=15,
+                                 height=2, activebackground='#ffa366',relief="groove",state=tk.DISABLED)
         self.button2.grid(column=2, row=1, padx=15, pady=15)
-        self.button2 = tk.Button(self.mainframe, text="zapisz",  bd=3, width=15, height=2, activebackground='#ffa366', relief="groove")
-        self.button2.grid(column=3, row=1, padx=15, pady=15)
-        self.button2 = tk.Button(self.mainframe, text="drukuj", bd=3, width=15, height=2, activebackground='#ffa366', relief="groove")
-        self.button2.grid(column=4, row=1, padx=15, pady=15)
+        self.button3 = tk.Button(self.mainframe, text="zapisz",  bd=3, width=15, height=2, activebackground='#ffa366'
+                                 , relief="groove",state=tk.DISABLED)
+        self.button3.grid(column=3, row=1, padx=15, pady=15)
+        self.button4 = tk.Button(self.mainframe, text="drukuj", bd=3, width=15, height=2, activebackground='#ffa366',
+                                 relief="groove",state=tk.DISABLED)
+        self.button4.grid(column=4, row=1, padx=15, pady=15)
         #self.info_label = tk.Label(self.tab1, text="")
         #self.info_label.grid(row=2, column=1)
 
         self.style = ttk.Style()
-        self.style.theme_use('default')
+        #self.style.theme_use('default')
+        self.style.configure('TLabel', foreground='red', background='grey')
+        self.style.configure('TButton', foreground='white', background='blue')
+        self.style.configure('TFrame', background='black')
+
+        self.clicked = tk.StringVar()
+        self.clicked.set("Wybierz dzień")
+        self.drop = tk.OptionMenu(self.mainframe, self.clicked, "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek",
+                                  "Sobota",command=self.choose)
+        #self.drop.config(font=self.fonts)
+        self.drop.grid(column=2, row=0)
+    def choose(self,clicked):
+        if self.clicked.get() != "Wybierz dzień":
+            if (self.button2['state'] == tk.DISABLED):
+                self.button2['state'] = tk.ACTIVE
+            else:
+                self.button2['state'] = tk.NORMAL
+        else:
+            return
+        if self.clicked.get() != "Wybierz dzień":
+            if (self.button3['state'] == tk.DISABLED):
+                self.button3['state'] = tk.ACTIVE
+            else:
+                self.button3['state'] = tk.NORMAL
+        else:
+            return
+        if self.clicked.get() != "Wybierz dzień":
+            if (self.button4['state'] == tk.DISABLED):
+                self.button4['state'] = tk.ACTIVE
+            else:
+                self.button4['state'] = tk.NORMAL
+        else:
+            return
 
 
     def open_file(self):
@@ -109,10 +147,6 @@ class Application:
 
     def create_view(self):
 
-        clicked= tk.StringVar()
-        clicked.set("Dzień")
-        self.drop=tk.OptionMenu(self.mainframe,clicked,"Poniedziałek","Wtorek","Środa","Czwartek","Piątek","Sobota")
-        self.drop.grid(column=2,row=2)
         self.options_buttons=[self.select_button,self.update_button,self.remove_button,self.add_button]
         for button in self.options_buttons:
             if (button['state'] == tk.DISABLED):
@@ -134,15 +168,24 @@ class Application:
                  '6S BUŁ BUDYŃ', '6S BUŁ JABŁ', '6S BUŁ MAK ', '6S BUŁ SER', '6S PĄCZEK', '6S PĄCZEK DONUT',
                  '6S PĄCZEK Z SER']
 
-        ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-        ilosc2 = [0, 2, 10, 10, 0, 0, 0, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
-        '''
-        if clicked.get()=="Dzień":
-
-        elif clicked.get()=="Wtorek":
-            ilosc1 = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [0, 2, 10, 10, 0, 0, 0, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
-        '''
+        if self.clicked.get() == "Poniedziałek":
+            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+        elif self.clicked.get() == "Wtorek":
+            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [2, 2, 2, 2, 2, 2, 2, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+        elif self.clicked.get() == "Środa":
+            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [3, 3, 3, 3, 3, 3, 3, 3,3, 3, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+        elif self.clicked.get() == "Czwartek":
+            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [4, 4, 4, 4, 4, 4, 4, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+        elif self.clicked.get() == "Piątek":
+            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [5, 5, 5, 5, 5, 5, 5, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+        else:
+            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
         for i in range(0, len(nazwy)):
             c.execute("""INSERT INTO produkcja_teren VALUES (?,?,?)""", (nazwy[i], ilosc1[i], ilosc2[i]))
 
@@ -242,6 +285,18 @@ class Application:
         self.tree.delete(x)
 
     def update_record(self):
+
+
+        try:
+            float(self.prod_entry.get())
+            float(self.no_sklepy_entry.get())
+            float(self.no_teren1_entry.get())
+            float(self.no_teren2_entry.get())
+
+        except ValueError:
+            #print("HELL NO")
+            messagebox.showerror("BŁĄD", "Błędne dane! Proszę wprowadzić wartość liczbową ")
+
         selected = self.tree.focus()
         self.tree.item(selected, text="", values=(self.prod_entry.get(), self.no_sklepy_entry.get(),
                                                   self.no_teren1_entry.get(), self.no_teren2_entry.get(),str(float(self.no_sklepy_entry.get())+float(self.no_teren1_entry.get())+float(self.no_teren2_entry.get()))))
