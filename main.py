@@ -3,6 +3,8 @@ from tkinter import ttk, filedialog
 import pandas as pd
 import sqlite3
 from tkinter import messagebox
+from docx import Document
+from docx.shared import Pt
 
 class Application:
     def __init__(self):
@@ -18,14 +20,6 @@ class Application:
         self.x = (self.scr_width / 2) - (self.app_width / 2)
         self.y = (self.scr_height / 2) - (self.app_height / 2)
         self.window.geometry(f'{self.app_width}x{self.app_height}+{int(self.x)}+{int(self.y)}')
-        '''
-        # Create an instance of ttk style
-        self.style = ttk.Style()
-        self.style.theme_use('default')
-        self.style.configure('TNotebook.Tab', background="Red")
-        self.style.map("TNotebook", background=[("selected", "red")])
-        '''
-
         self.notebook = ttk.Notebook(self.window)
         self.notebook.pack(pady=25)
 
@@ -69,7 +63,7 @@ class Application:
                                  , relief="groove",state=tk.DISABLED)
         self.button3.grid(column=3, row=1, padx=15, pady=15)
         self.button4 = tk.Button(self.mainframe, text="drukuj", bd=3, width=15, height=2, activebackground='#ffa366',
-                                 relief="groove",state=tk.DISABLED)
+                                 relief="groove",state=tk.DISABLED,command=self.print_word)
         self.button4.grid(column=4, row=1, padx=15, pady=15)
         #self.info_label = tk.Label(self.tab1, text="")
         #self.info_label.grid(row=2, column=1)
@@ -109,7 +103,6 @@ class Application:
         else:
             return
 
-
     def open_file(self):
         filepath = filedialog.askopenfilename(initialdir="C:\\Users\\user\\PycharmProjects\\bakery_app",
                                               title="wybierz plik z dzisiejszym planem produkcji",
@@ -122,9 +115,9 @@ class Application:
                 df.dropna(axis=0, inplace=True)
                 self.idx = df.index
             except ValueError:
-                self.info_label.config(text="Nie można otworzyć pliku, spróbuj ponownie")
+                messagebox.showerror("BŁĄD", "nie można znaleźć pliku, spróbuj ponownie")
             except FileNotFoundError:
-                self.info_label.config(text="nie można znaleźć pliku, spróbuj ponownie")
+                messagebox.showerror("BŁĄD","nie można znaleźć pliku, spróbuj ponownie")
 
         self.values = []
         for i in range(0, len(df)):
@@ -135,7 +128,7 @@ class Application:
         c.execute(("""DROP TABLE IF EXISTS produkcja_sklepy"""))
         c.execute("""CREATE TABLE produkcja_sklepy (
         id_produkt text primary key,
-        ilosc real
+        ilosc integer
         )""")
 
         for i in range(0, len(df)):
@@ -159,8 +152,8 @@ class Application:
         c.execute(("""DROP TABLE IF EXISTS produkcja_teren"""))
         c.execute("""CREATE TABLE produkcja_teren (
                 id_produkt text primary key,
-                ilosc_teren1 real,
-                ilosc_teren2 real
+                ilosc_teren1 integer,
+                ilosc_teren2 integr
                 )""")
         nazwy = ['1CHLEB 1 KG', '1CHLEB 1 KG FOR', '1CHLEB 0,70', '1CHLEB 0,70 KRO', '1CHLEB 0,60', '1CHLEB 0,60 KRO',
                  '2R INDYJSKI', '2RAZOWY 0,60',
@@ -195,6 +188,7 @@ class Application:
         LEFT JOIN
         produkcja_teren AS t ON s.id_produkt = t.id_produkt
         """)
+        print(type(conn))
         self.records = c.fetchall()
         conn.commit()
         conn.close()
@@ -210,7 +204,6 @@ class Application:
 
         self.tree_frame = ttk.Frame(self.bottomframe)
         self.tree_frame.pack()
-        #self.tree_frame.grid(row=2, column=0, columnspan=7, padx=20, pady=20)
         self.tree_scroll = ttk.Scrollbar(self.tree_frame)
         self.tree_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.tree = ttk.Treeview(self.tree_frame, yscrollcommand=self.tree_scroll.set, selectmode="extended")
@@ -241,10 +234,12 @@ class Application:
         for record in self.records:
             if count % 2 == 0:
                 self.tree.insert(parent='', index=tk.END, text='',
-                                 values=(record[0], record[1], record[2], record[3], record[4]), tags=('evenrow',))
+                                 values=(record[0], ('%f' % record[1]).rstrip('0').rstrip('.'), record[2], record[3],
+                                         ('%f' % record[4]).rstrip('0').rstrip('.') ), tags=('evenrow',))
             else:
                 self.tree.insert(parent='', index=tk.END, text='',
-                                 values=(record[0], record[1], record[2], record[3], record[4]), tags=('oddrow',))
+                                 values=(record[0], ('%f' % record[1]).rstrip('0').rstrip('.'), record[2], record[3],
+                                         ('%f' % record[4]).rstrip('0').rstrip('.')), tags=('oddrow',))
             count += 1
 
         self.record_frame = ttk.LabelFrame(self.bottomframe, text="pozycja")
@@ -262,8 +257,6 @@ class Application:
         self.no_teren2_entry = tk.Entry(self.record_frame)
         self.no_teren2_entry.grid(row=0, column=7, padx=3, pady=5)
         self.tree.bind("<ButtonRelease-1>", self.select)
-
-
 
     def select(self, e):
         self.clear()
@@ -285,38 +278,43 @@ class Application:
         self.tree.delete(x)
 
     def update_record(self):
-
+        conn = sqlite3.connect('costumer.db')
+        c = conn.cursor()
 
         try:
-            float(self.prod_entry.get())
             float(self.no_sklepy_entry.get())
-            float(self.no_teren1_entry.get())
-            float(self.no_teren2_entry.get())
+            if self.no_teren1_entry.get() != "None":
+                float(self.no_teren1_entry.get())
+            else:
+                self.no_teren1_entry.delete(0,tk.END)
+                self.no_teren1_entry.insert(tk.END,0)
+            if self.no_teren2_entry.get() != "None":
+                float(self.no_teren2_entry.get())
+            else:
+                self.no_teren2_entry.delete(0, tk.END)
+                self.no_teren2_entry.insert(tk.END,0)
 
         except ValueError:
-            #print("HELL NO")
             messagebox.showerror("BŁĄD", "Błędne dane! Proszę wprowadzić wartość liczbową ")
 
         selected = self.tree.focus()
         self.tree.item(selected, text="", values=(self.prod_entry.get(), self.no_sklepy_entry.get(),
-                                                  self.no_teren1_entry.get(), self.no_teren2_entry.get(),str(float(self.no_sklepy_entry.get())+float(self.no_teren1_entry.get())+float(self.no_teren2_entry.get()))))
-        conn = sqlite3.connect('costumer.d')
-        c = conn.cursor()
-        c.execute("""UPDATE produkcja_sklepy SET
-                id_produkt = :id_pro,
+                                                  self.no_teren1_entry.get(), self.no_teren2_entry.get(),str(int(self.no_sklepy_entry.get())+int(self.no_teren1_entry.get())+int(self.no_teren2_entry.get()))))
+
+        c.execute('''UPDATE produkcja_sklepy SET
                 ilosc = :val
-                WHERE oid = :oid""",
+                WHERE 
+                id_produkt = :id_pro''',
                     {
-                        'id_pro':self.prod_entry.get(),
-                        'val' :self.no_sklepy_entry.get(),
-                        'oid' : self.prod_entry.get(),
+                        'id_pro':str(self.prod_entry.get()),
+                        'val' :str(self.no_sklepy_entry.get()),
                     }
         )
-        c.execute("""UPDATE produkcja_teren SET
-                
+        conn.commit()
+        c.execute('''UPDATE produkcja_teren SET
                 ilosc_teren1 = :val1,
                 ilosc_teren2 = :val2
-                WHERE oid = :oid""",
+                WHERE id_produkt = :oid''',
                   {
                       'val1' : self.no_teren1_entry.get(),
                       'val2' : self.no_teren2_entry.get(),
@@ -325,8 +323,32 @@ class Application:
         )
 
         conn.commit()
+
         conn.close()
         self.clear()
+
+    def print_word(self):
+        doc=Document()
+        doc.add_heading('Produkcja na dzień:', 0)
+
+        conn = sqlite3.connect('costumer.db')
+        c = conn.cursor()
+        c.execute("""SELECT s.id_produkt,
+         COALESCE(s.ilosc + t.ilosc_teren1 +t.ilosc_teren2,s.ilosc) AS suma
+        FROM produkcja_sklepy AS s
+        LEFT JOIN
+        produkcja_teren AS t ON s.id_produkt = t.id_produkt""")
+
+        temp=c.fetchall()
+        for t in range (0, len(temp)):
+            nazwa=temp[t][0]
+            suma= str(temp[t][1])
+            dana = doc.add_paragraph().add_run(nazwa + " -- " +suma)
+            dana.font.size = Pt(18)
+
+        doc.save("produkcja.docx")
+
+        conn.commit()
 
 
 apl = Application()
