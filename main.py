@@ -5,6 +5,9 @@ import sqlite3
 from tkinter import messagebox
 from docx import Document
 from docx.shared import Pt
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
 
 class Application:
     def __init__(self):
@@ -78,6 +81,7 @@ class Application:
         self.clicked.set("Wybierz dzień")
         self.drop = tk.OptionMenu(self.mainframe, self.clicked, "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek",
                                   "Sobota",command=self.choose)
+        self.drop.config(state=tk.DISABLED)
         #self.drop.config(font=self.fonts)
         self.drop.grid(column=2, row=0)
     def choose(self,clicked):
@@ -119,6 +123,8 @@ class Application:
             except FileNotFoundError:
                 messagebox.showerror("BŁĄD","nie można znaleźć pliku, spróbuj ponownie")
 
+        if (self.drop['state'] == tk.DISABLED):
+            self.drop['state'] = tk.ACTIVE
         self.values = []
         for i in range(0, len(df)):
             self.values.append(df.iat[i, 0])
@@ -140,6 +146,7 @@ class Application:
 
     def create_view(self):
 
+        self.button2['state']=tk.DISABLED
         self.options_buttons=[self.select_button,self.update_button,self.remove_button,self.add_button]
         for button in self.options_buttons:
             if (button['state'] == tk.DISABLED):
@@ -329,7 +336,9 @@ class Application:
 
     def print_word(self):
         doc=Document()
-        doc.add_heading('Produkcja na dzień:', 0)
+        today=date.today() +timedelta(1)
+
+        doc.add_heading('Produkcja na dzień '+f"{today}"+' :', 0)
 
         conn = sqlite3.connect('costumer.db')
         c = conn.cursor()
@@ -346,7 +355,8 @@ class Application:
             dana = doc.add_paragraph().add_run(nazwa + " -- " +suma)
             dana.font.size = Pt(18)
 
-        doc.save("produkcja.docx")
+        doc.save("C:\\Users\\user\\PycharmProjects\\bakery_app\\produkcja.docx")
+    
 
         conn.commit()
 
