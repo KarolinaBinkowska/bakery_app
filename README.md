@@ -11,3 +11,5 @@ The usual tasks of bakery worker:
 The app shortens the working time about 90%.
 Worker has to only load the file from a special program, 
 choose the day of production and make eventual corrections.
+
+//work in progress
