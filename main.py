@@ -162,30 +162,30 @@ class Application:
                 ilosc_teren1 integer,
                 ilosc_teren2 integr
                 )""")
-        nazwy = ['1CHLEB 1 KG', '1CHLEB 1 KG FOR', '1CHLEB 0,70', '1CHLEB 0,70 KRO', '1CHLEB 0,60', '1CHLEB 0,60 KRO',
+        nazwy = ['1CHLEB 1 KG', '1CHLEB 1 KG FOR', '1CHLEB 0,60', '1CHLEB 0,60 KRO',
                  '2R INDYJSKI', '2RAZOWY 0,60',
                  '4WROCŁAWSKA', '3BUŁKA 0,10', '3BUŁKA 0,05', '5M ROGAL 0,10', '5M WARKOCZ 0,10', '5M CHAŁKA 0,50',
                  '6S BUŁ BUDYŃ', '6S BUŁ JABŁ', '6S BUŁ MAK ', '6S BUŁ SER', '6S PĄCZEK', '6S PĄCZEK DONUT',
                  '6S PĄCZEK Z SER']
 
         if self.clicked.get() == "Poniedziałek":
-            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+            ilosc1 = [2, 0, 12, 13, 1, 0, 1, 15, 10, 3, 0, 1, 0, 2, 2, 2, 2, 0, 0 ]
+            ilosc2 = [0, 2, 7, 8, 0, 2, 2, 25, 80, 5, 10, 7, 0, 10, 10, 10, 20, 0, 0 ]
         elif self.clicked.get() == "Wtorek":
-            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [2, 2, 2, 2, 2, 2, 2, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+            ilosc1 = [0, 3, 40, 40, 1, 0, 2, 60, 20, 10, 5, 5, 0, 5, 5, 5, 5, 0, 0 ]
+            ilosc2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
         elif self.clicked.get() == "Środa":
-            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [3, 3, 3, 3, 3, 3, 3, 3,3, 3, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+            ilosc1 = [0, 2, 17, 18, 0, 1, 1, 15, 10, 3, 0, 1, 0, 2, 2, 0, 2, 0, 0 ]
+            ilosc2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         elif self.clicked.get() == "Czwartek":
-            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [4, 4, 4, 4, 4, 4, 4, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+            ilosc1 = [2, 0, 43, 42, 0, 2, 2, 80, 20,10, 5, 5, 0, 5, 5, 5, 5, 3, 2]
+            ilosc2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         elif self.clicked.get() == "Piątek":
-            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [5, 5, 5, 5, 5, 5, 5, 1, 1, 10, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+            ilosc1 = [0, 2, 20, 20, 1, 0, 1, 15, 10, 3, 0, 1, 0, 0, 2, 2, 2, 0, 0]
+            ilosc2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         else:
-            ilosc1 = [2, 0, 20, 15, 0, 0, 0, 2, 1, 15, 15, 5, 0, 1, 0, 0, 2, 2, 2, 0, 0]
-            ilosc2 = [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 20, 3, 2, 1, 2, 2, 2, 2, 2, 0, 0]
+            ilosc1 = [3, 0, 45, 45, 2, 0, 2, 70, 10, 5, 5, 4, 0, 5, 5, 3, 2, 0, 0]
+            ilosc2 = [1, 0, 15, 10, 1, 0, 1, 15, 15, 3, 0, 1, 0, 2,0, 2, 2, 0, 0]
         for i in range(0, len(nazwy)):
             c.execute("""INSERT INTO produkcja_teren VALUES (?,?,?)""", (nazwy[i], ilosc1[i], ilosc2[i]))
 
@@ -265,6 +265,8 @@ class Application:
         self.no_teren2_entry.grid(row=0, column=7, padx=3, pady=5)
         self.tree.bind("<ButtonRelease-1>", self.select)
 
+
+
     def select(self, e):
         self.clear()
         self.selected = self.tree.focus()
@@ -329,6 +331,9 @@ class Application:
                   }
         )
 
+        c.execute("""ALTER TABLE produkcja_sklepy
+        ADD COLUMN suma""")
+        c.execute("""INSERT INTO produkcja_sklepy (suma) VALUES ()""")
         conn.commit()
 
         conn.close()
@@ -342,12 +347,14 @@ class Application:
 
         conn = sqlite3.connect('costumer.db')
         c = conn.cursor()
-        c.execute("""SELECT s.id_produkt,
-         COALESCE(s.ilosc + t.ilosc_teren1 +t.ilosc_teren2,s.ilosc) AS suma
-        FROM produkcja_sklepy AS s
-        LEFT JOIN
-        produkcja_teren AS t ON s.id_produkt = t.id_produkt""")
 
+
+        c.execute("""         SELECT s.id_produkt,
+                 COALESCE(s.ilosc + t.ilosc_teren1 +t.ilosc_teren2,s.ilosc) AS suma
+                FROM produkcja_sklepy AS s
+                LEFT JOIN
+                produkcja_teren AS t ON s.id_produkt = t.id_produkt """)
+  
         temp=c.fetchall()
         for t in range (0, len(temp)):
             nazwa=temp[t][0]
@@ -356,7 +363,7 @@ class Application:
             dana.font.size = Pt(18)
 
         doc.save("C:\\Users\\user\\PycharmProjects\\bakery_app\\produkcja.docx")
-    
+
 
         conn.commit()
 
